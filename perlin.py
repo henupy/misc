@@ -3,7 +3,7 @@ Some kind of an effort to create Perlin noise, for now only in 2d
 
 More info is for example in Wikipedia: https://en.wikipedia.org/wiki/Perlin_noise
 
-This implementation however follows more along the lines the one shown in:
+This implementation however follows more along the lines of the one shown in:
 https://www.cs.umd.edu/class/fall2018/cmsc425/Lects/lect14-perlin.pdf
 """
 
@@ -90,18 +90,19 @@ def _interpolate_dots(grid: np.ndarray, point: np.ndarray, cell: tuple, cell_x: 
     return top_left + top_right + bottom_left + bottom_right
 
 
-def _get_values(img: np.ndarray, grid: np.ndarray) -> np.ndarray:
+def _get_pixel_values(w: int, h: int, grid: np.ndarray) -> np.ndarray:
     """
-    :param img:
+    :param w: Width of the image in pixels
+    :param h: Height of the image in pixels
     :param grid:
     :return:
     """
-    rows, cols = img.shape[:2]
+    img = np.zeros(shape=(h, w))
     grid_h, grid_w = grid.shape[:2]
-    cell_y = rows // grid_h  # Height of a grid cell in pixels
-    cell_x = cols // grid_w  # Width of a grid cell in pixels
-    for y in range(rows):
-        for x in range(cols):
+    cell_y = h // grid_h  # Height of a grid cell in pixels
+    cell_x = w // grid_w  # Width of a grid cell in pixels
+    for y in range(h):
+        for x in range(w):
             cell = int(np.floor(y / cell_y)), int(np.floor(x / cell_x))
             value = _interpolate_dots(grid=grid, point=np.array([x, y]), cell=cell,
                                       cell_x=cell_x, cell_y=cell_y)
@@ -110,40 +111,47 @@ def _get_values(img: np.ndarray, grid: np.ndarray) -> np.ndarray:
     return img
 
 
-def gen_noise(width: int, height: int, grid_w: int, grid_h: int) -> np.ndarray:
+def noise(width: int, height: int, octaves: int = 1, persistence: numeric = 1) \
+        -> np.ndarray:
     """
     Generates the image of Perlin noise from the given image with the normalized
     gradient vectors
     :param width: Width of the image in pixels
     :param height: Height of the image in pixels
-    :param grid_w: The amount of grid cells along the x-axis
-    :param grid_h: The amount of grid cells along the y-axis
+    :param octaves: The amount of octaves (maximum value is 8). Defaults to 1.
+    :param persistence: An optional scaling factor on the range (0, 1) used to scale
+    (dampen) the higher octaves. Defaults to 1. Is only applied if octaves > 1.
     :return:
     """
-    # Assert the grid divides the image evenly
-    if width % grid_w != 0:
-        msg = 'The number of grid cells does not divide the width of the ' \
-              'image evenly'
-        raise ValueError(msg)
-    if height % grid_h != 0:
-        msg = 'The number of grid cells does not divide the height of the ' \
-              'image evenly'
+    # Assert that the number of octaves isn't too high
+    limit = np.power(2, octaves)
+    if limit > width or limit > height:
+        msg = f'The number of octaves is too large. 2^octaves must be smaller than' \
+              f'the width and height of the image.'
         raise ValueError(msg)
 
-    # Initialise a blank image with one color channel
+    grid_w, grid_h = 2, 2  # Amount of grid cells in both direction
+    if octaves == 1:
+        grid = np.random.random(size=(grid_h, grid_w, 2)) * 2 - 1
+        grid = grid / np.linalg.norm(grid[:, :], axis=2, keepdims=True)
+        return _get_pixel_values(w=width, h=height, grid=grid)
     img = np.zeros(shape=(height, width))
-    # Create the 2d grid with (normalised) gradient vectors at each cell corner
-    grid = np.random.random(size=(grid_h, grid_w, 2)) * 2 - 1
-    grid = grid / np.linalg.norm(grid[:, :], axis=2, keepdims=True)
-    return _get_values(img=img, grid=grid)
+    for o in range(octaves):
+        f = np.power(2, o)
+        p = np.power(persistence, o)
+        grid = np.random.random(size=(grid_h * f, grid_w * f, 2)) * 2 - 1
+        grid = grid / np.linalg.norm(grid[:, :], axis=2, keepdims=True)
+        img += p * _get_pixel_values(w=width, h=height, grid=grid)
+    return img
 
 
 def main():
     width, height = 256, 256  # Size of the image in pixels
-    grid_w, grid_h = 32, 32  # Amount of grid cells in both direction
-    cmap = 'gray'
-    img = gen_noise(width=width, height=height, grid_w=grid_w, grid_h=grid_h)
-    _, ax = plt.subplots()
+    octaves, persistence = 8, 0.5
+    np.random.seed(69420)
+    cmap = 'jet'
+    img = noise(width=width, height=height, octaves=octaves, persistence=persistence)
+    plt.figure()
     plt.imshow(img, cmap=cmap)
     plt.colorbar()
     plt.show()
