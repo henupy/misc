@@ -120,7 +120,7 @@ def noise(width: int, height: int, octaves: int = 1, persistence: numeric = 1) \
     :param height: Height of the image in pixels
     :param octaves: The amount of octaves (maximum value is 8). Defaults to 1.
     :param persistence: An optional scaling factor on the range (0, 1) used to scale
-    (dampen) the higher octaves. Defaults to 1. Is only applied if octaves > 1.
+        (dampen) the higher octaves. Defaults to 1. Is only applied if octaves > 1.
     :return:
     """
     # Assert that the number of octaves isn't too high

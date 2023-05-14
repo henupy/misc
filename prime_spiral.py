@@ -31,7 +31,7 @@ def polar2xy(r: int | float, omega: int | float) -> tuple:
     Converts polar coordinates (radius and angle) into x and y coordinates
     :param r: Radius or distance from the origo
     :param omega: Angle between the radius and the positive
-    x-axis
+        x-axis
     :return:
     """
     x = r * math.cos(omega)
