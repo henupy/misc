@@ -50,7 +50,7 @@ def spiral(n: int) -> None:
     coords = [polar2xy(p, p) for p in primes]
     x = [c[0] for c in coords]
     y = [c[1] for c in coords]
-    plt.scatter(x, y, s=3, c='blue')
+    plt.scatter(x, y, s=3, c="blue")
     plt.grid()
     plt.show()
 
@@ -60,5 +60,5 @@ def main():
     spiral(n)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ def read_number(fname: str) -> int:
     :param fname:
     :return:
     """
-    with open(fname, 'r') as file:
+    with open(fname, "r") as file:
         return int(file.read())
 
 
@@ -81,7 +81,7 @@ def main() -> None:
     img = np.zeros((height, width, c_channels))
 
     # Read the number from the file
-    filename = 'tupper_big_af_k.txt'
+    filename = "tupper_big_af_k.txt"
     big_af_k = read_number(filename)
 
     # Apply the function
@@ -96,5 +96,5 @@ def main() -> None:
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -23,7 +23,7 @@ def timer(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         s = default_timer()
         rv = func(*args, **kwargs)
-        print(f'Time: {func.__name__}: {default_timer() - s:.4f} s')
+        print(f"Time: {func.__name__}: {default_timer() - s:.4f} s")
         return rv
     return wrapper
 
@@ -134,5 +134,5 @@ def main() -> None:
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ numeric = int | float
 def _offsets_and_grads(grid: np.ndarray, point: np.ndarray, cell: tuple,
                        cell_x: int, cell_y: int) -> tuple[np.ndarray, np.ndarray]:
     """
-    Returns the four offset vectors from the point to the cell's corners, and
+    Returns the four offset vectors from the point to the cell"s corners, and
     the gradient vectors located at the corners
     :param grid:
     :param point:
@@ -58,9 +58,9 @@ def _jointfade(tx: numeric, ty: numeric) -> numeric:
     :return:
     """
     if not (0 <= tx <= 1):
-        raise ValueError('Too large fading factor in the x-axis')
+        raise ValueError("Too large fading factor in the x-axis")
     if not (0 <= ty <= 1):
-        raise ValueError('Too large fading factor in the y-axis')
+        raise ValueError("Too large fading factor in the y-axis")
     return _fade(tx) * _fade(ty)
 
 
@@ -123,11 +123,11 @@ def noise(width: int, height: int, octaves: int = 1, persistence: numeric = 1) \
         (dampen) the higher octaves. Defaults to 1. Is only applied if octaves > 1.
     :return:
     """
-    # Assert that the number of octaves isn't too high
+    # Assert that the number of octaves isn"t too high
     limit = np.power(2, octaves)
     if limit > width or limit > height:
-        msg = f'The number of octaves is too large. 2^octaves must be smaller than' \
-              f'the width and height of the image.'
+        msg = f"The number of octaves is too large. 2^octaves must be smaller than" \
+              f"the width and height of the image."
         raise ValueError(msg)
 
     grid_w, grid_h = 2, 2  # Amount of grid cells in both direction
@@ -149,7 +149,7 @@ def main():
     width, height = 256, 256  # Size of the image in pixels
     octaves, persistence = 8, 0.5
     np.random.seed(69420)
-    cmap = 'jet'
+    cmap = "jet"
     img = noise(width=width, height=height, octaves=octaves, persistence=persistence)
     plt.figure()
     plt.imshow(img, cmap=cmap)
@@ -157,5 +157,5 @@ def main():
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
